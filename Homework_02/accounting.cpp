@@ -2,6 +2,7 @@
 // ESE 224 - Homework 02
 
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 #include <fstream>
 
@@ -66,7 +67,7 @@ double convertToDouble(string str)
 // -----
 // Takes single line of input and converts "coded" values into doubles
 // -----
-double * formatNums(string input)
+vector<double> formatNums(string input)
 {
   // --- PART 1 ---
   // Break up string into elements
@@ -95,25 +96,34 @@ double * formatNums(string input)
   // Convert string elements into double values
 
   // double array to hold dolar values
-  double* doubleDollarVal = new double[numElements];
-  
+  vector<double> doubleDollarVal;
+  // double* doubleDollarVal = new double[numElements];
+
   for (int i = 0; i < numElements; i++)
-    doubleDollarVal[i] = convertToDouble(strDollarVal[i]);
+    doubleDollarVal.push_back(convertToDouble(strDollarVal[i]));
 
   return doubleDollarVal;
 }
 
+// -----
+// Function to create a new file and write formatted values into it
+// -----
+void writeToFile(string fileName, vector<double> values)
+{
+  ofstream outFile;
+  outFile.open (fileName);
+  for (vector<int>::size_type i = 0; i < values.size(); i++)
+    outFile << values[i] << " ";
+  outFile.close();
+}
+
 int main()
 {
-  string o = readFile();
-  double* vals = formatNums(o);
+  string o = readFile();  // Get values from text file
+  vector<double> values = formatNums(o);  // Convert text file into double values
 
-  // Printing values:
-  for (int i = 0; i < sizeof(vals)/2; i++)
-    {
-      cout << "Val " << i << ": " << vals[i] << "\n";
-    }
-
+  string fileName = "formattedValues.txt";
+  writeToFile(fileName, values);  // Write new values into new text file
 
   return 0;
 }
