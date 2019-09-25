@@ -11,9 +11,9 @@ using namespace std;
 // -----
 // Opens file Q1.txt and returns values from inside
 // -----
-string readFile()
+string readFile(string fileName)
 {
-  ifstream myfile ("Q1.txt");
+  ifstream myfile (fileName);
   string fileText = "";
   if (myfile.is_open())
     {
@@ -114,13 +114,15 @@ void writeToFile(string fileName, vector<double> values)
   outFile.open (fileName);
   for (vector<int>::size_type i = 0; i < values.size(); i++)
     outFile << values[i] << " ";
+  outFile << endl;
   outFile.close();
 }
 
 int main()
 {
-  string o = readFile();  // Get values from text file
-  vector<double> values = formatNums(o);  // Convert text file into double values
+  string inFile = "Q1.txt";
+  string input = readFile(inFile);  // Get values from text file
+  vector<double> values = formatNums(input);  // Convert text file into double values
 
   string fileName = "formattedValues.txt";
   writeToFile(fileName, values);  // Write new values into new text file
