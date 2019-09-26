@@ -10,10 +10,9 @@ class hangman
 {
 private:
   string phrase;
-public:
-  int k;
-  // hangman()
-  // {
-  //   phrase = "practice";
-  // }
-};
+  
+  hangman()
+  {
+    phrase = "practice";
+  }
+}
