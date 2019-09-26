@@ -1,0 +1,11 @@
+// Mike Kennedy - 108715992
+// ESE 224 - Homework 2 Q3
+
+#include <iostream>
+using namespace std;
+
+int main()
+{
+  cout << "Hello world!" << endl;
+  return 0;
+}
