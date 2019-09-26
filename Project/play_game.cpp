@@ -34,11 +34,13 @@ int main()
 	  if (h.gameWon())
 	    {
 	      cout << "Game won!" << endl;
+	      cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
 	      break;
 	    }
 	  else if(h.gameLost())
 	    {
 	      cout << "Game lost! :(" << endl;
+	      cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
 	      break;
 	    }
 	  else
@@ -49,6 +51,7 @@ int main()
       	{
       	  cout << "Cannot guess the same letter twice!" << endl;
       	}
+      cout << endl;
     }
 
   
