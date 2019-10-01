@@ -18,7 +18,8 @@ int main()
       cout << "Enter second number: ";
       cin >> y;
       mean = harmonicMean(x, y);
-      cout << "Ther harmonic mean of " << x << " and " << y << " is: " << mean << endl;
+      cout << "The harmonic mean of " << x << " and " << y << " is: " << mean << endl;
+      cout << endl;
     }
   cout << "Harmonic mean is zero, program terminating." << endl;
   return 0;

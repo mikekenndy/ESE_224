@@ -5,8 +5,20 @@
 
 #include<iostream>
 
+using namespace std;
+
 class game_board
 {
  private:
   int board;
+ public:
+
+  // Default constructor
+  game_board() {}
+
+  // Functions
+  void displayBoard()
+    {
+      cout << "Displaying board" << endl;
+    }
 };
