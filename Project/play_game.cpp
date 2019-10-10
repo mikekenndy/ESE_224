@@ -17,43 +17,74 @@
 
 using namespace std;
 
+// Remove return character that exists in text file
+string removeReturn(string phrase)
+{
+  string newPhrase = "";
+  for (int i = 0; i < phrase.length(); i++)
+    if (phrase[i] != '\r')
+      newPhrase += phrase[i];
+  return newPhrase;
+}
+
+bool validInput(string input)
+{
+  if (input.length() > 1)
+    return false;
+  
+  string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
+  return invalids.find(input) == string::npos;
+}
+
 int main()
 {
   cout << "Creating game..." << endl;
 
-  hangman h("phrase");
+  string phrase = loadRandomWord("WordList.txt");
+  phrase = removeReturn(phrase);
+  hangman h(phrase);
 
   char guess;
+  string input;
+  
   while(true)
     {
       cout << "Enter guess: ";
-      cin >> guess;
-      try
-      	{
-      	  h.guessLetter(guess);
-	  if (h.gameWon())
+      getline(cin, input);
+      if(validInput(input))
+	{
+	  guess = input[0];
+	  try
 	    {
-	      cout << "Game won!" << endl;
-	      cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
-	      break;
+	      h.guessLetter(guess);
+	      if (h.gameWon())
+		{
+		  cout << "Game won!" << endl;
+		  cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
+		  break;
+		}
+	      else if(h.gameLost())
+		{
+		  cout << "Game lost! :(" << endl;
+		  cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
+		  break;
+		}
+	      else
+		cout << h.guessesRemaining() << " incorrect guesses remaining!" << endl;
+	      
 	    }
-	  else if(h.gameLost())
+	  catch(CharAlreadyGuessed e)
 	    {
-	      cout << "Game lost! :(" << endl;
-	      cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
-	      break;
+	      cout << "Cannot guess the same letter twice!" << endl;
 	    }
-	  else
-	    cout << h.guessesRemaining() << " incorrect guesses remaining!" << endl;
-	  
-      	}
-      catch(CharAlreadyGuessed e)
-      	{
-      	  cout << "Cannot guess the same letter twice!" << endl;
-      	}
-      cout << endl;
+	  cout << endl;
+	}
+      else
+	cout << "\nError, invalid input, try again" << endl;
     }
 
   
   return 0;
 }
+
+
