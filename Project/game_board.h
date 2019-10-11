@@ -11,7 +11,6 @@ using namespace std;
 class game_board
 {
  private:
-  int board;
   int numWrong;
   string phrase;
 
@@ -80,14 +79,14 @@ class game_board
   // Display wrong guesses
   string wrongGuesses(string guesses)
   {
-    string ret = "";
+    string wrong = "";
     for (int i = 0; i < guesses.length(); i++)
       if (phrase.find(guesses[i]) == string::npos)
-	ret += guesses[i];
+	wrong += guesses[i];
 
     // Set value for number of incorrect guesses
-    numWrong = ret.length();
-    return ret;
+    numWrong = wrong.length();
+    return wrong;
   }
 
   

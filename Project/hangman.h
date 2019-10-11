@@ -82,10 +82,7 @@ class hangman
   }
 
   // Game indicators
-  bool gameWon()
-  {
-    return lettersRemaining() == 0;
-  }
+  bool gameWon(){return lettersRemaining() == 0;}
   bool gameLost() { return incorrectGuesses == MAX_FAILS; }
   int guessesRemaining() { return MAX_FAILS - incorrectGuesses; }
 };

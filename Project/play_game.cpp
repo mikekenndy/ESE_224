@@ -7,7 +7,7 @@
 // Features:
 // - Draw hangman figure
 // - Display '_' for unknown characters
-// - Display correctly guess character
+// - Display correctly guess characters
 // 
 // Part 2:
 //
@@ -16,6 +16,8 @@
 #include"hangman.h"
 
 using namespace std;
+
+const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 
 // Remove return character that exists in text file
 string removeReturn(string phrase)
@@ -31,16 +33,13 @@ bool validInput(string input)
 {
   if (input.length() > 1)
     return false;
-  
-  string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
+
   return invalids.find(input) == string::npos;
 }
 
-int main()
+void newGame()
 {
-  cout << "Creating game..." << endl;
-
-  string phrase = loadRandomWord("WordList.txt");
+    string phrase = loadRandomWord("WordList.txt");
   phrase = removeReturn(phrase);
   hangman h(phrase);
 
@@ -82,8 +81,63 @@ int main()
       else
 	cout << "\nError, invalid input, try again" << endl;
     }
+}
 
-  
+void displayGreeting()
+{
+  cout << endl;
+  printMessage("Hangman Game", true, false);
+  printMessage("ESE224 Fall 2019", true, false);
+  printMessage("Group Members:", true, false);
+  printMessage("Mike Kennedy - 108715992", false, false);
+  printMessage("1. start a new game (part 1)", true, false);
+  printMessage("2. sign in as user (part 2)", false, false);
+  printMessage("3. sign in as admin (part 2)", false, true);
+  cout << endl;
+}
+
+int main()
+{
+  string input;
+  char in;
+
+  while (in != 'q')
+    {
+      
+      displayGreeting();
+
+      cout << "Please select a number to continue, enter 'q' to quit: ";
+      getline(cin, input);
+      in = input[0];
+      if (input.length() > 1)
+	in = '0';
+
+      switch(in)
+	{
+	case '1':
+	  newGame();
+	  break;
+	  
+	case '2':
+	case '3':
+	  cout << endl;
+	  cout << "Sorry, this feature is not yet available." << endl;
+	  cout << endl;
+	  break;
+	  
+	case 'q':
+	  cout << endl;
+	  cout << "Application terminating..." << endl;
+	  break;
+	  
+	default:
+	  cout << endl;
+	  cout << "Input not recognized, please try again." << endl;
+	  cout << endl;
+	  break;
+	}
+    }
+    
   return 0;
 }
 
