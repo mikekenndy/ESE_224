@@ -1,0 +1,13 @@
+// Mike Kennedy - 108715992
+// ESE224 - Homework 03
+// Problem 01 Sorting a vector
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+  cout << "Hello world!" << endl;
+  return 0;
+}
