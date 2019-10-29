@@ -1,0 +1,9 @@
+// Mike Kennedy - 108715992
+// ESE 224 - Hangman Project
+
+// Functions for handling tasks regarding users
+
+void testFunc()
+{
+  cout << "IN TEST" << endl;
+}

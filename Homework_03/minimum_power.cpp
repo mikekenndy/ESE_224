@@ -36,7 +36,7 @@ vector<vector<double>> getPower()
 	  if ( day == NUM_DAYS )
 	    {
 	      day = 0;
-	      week ++;
+	      week++;
 	    }
 	}
       powerFile.close();
@@ -67,8 +67,11 @@ void displayMin(vector<vector<double>> power)
 	      lowestDay = day;
 	    }	  
 	}
-      
-      cout << "The lowest power in week " << (week + 1) << " was " << dayPower << " on day " << (lowestDay + 1) << endl;
+
+      // Display lowest power output in current week
+      cout << "The lowest power in week ";
+      cout << (week + 1) << " was " << dayPower;
+      cout << " on day " << (lowestDay + 1) << endl;
     }
 }
 

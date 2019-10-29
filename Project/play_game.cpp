@@ -14,10 +14,12 @@
 
 #include<iostream>
 #include"hangman.h"
+#include"userFunctions.h"
 
 using namespace std;
 
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
+const string WORD_BANK = "WordList.txt";
 
 // Remove return character that exists in text file
 string removeReturn(string phrase)
@@ -39,7 +41,7 @@ bool validInput(string input)
 
 void newGame()
 {
-    string phrase = loadRandomWord("WordList.txt");
+  string phrase = loadRandomWord(WORD_BANK);
   phrase = removeReturn(phrase);
   hangman h(phrase);
 
@@ -96,14 +98,16 @@ void displayGreeting()
   cout << endl;
 }
 
+
 int main()
 {
   string input;
   char in;
 
+  // Continue prompting user for input until they quit
   while (in != 'q')
     {
-      
+
       displayGreeting();
 
       cout << "Please select a number to continue, enter 'q' to quit: ";
@@ -112,13 +116,31 @@ int main()
       if (input.length() > 1)
 	in = '0';
 
+      // Variables used in switch
+      string uname;
+	
       switch(in)
 	{
 	case '1':
 	  newGame();
 	  break;
-	  
 	case '2':
+	  cout << "Displaying UserAccountHistory.txt" << endl;
+	  displayFile("UserAccountHistory.txt");
+
+	  cout << "Enter username: ";
+	  getline(cin, uname);
+	  if (isValidUsername(uname))
+	    {
+	      cout << uname << " is in the file" << endl;
+	    }
+	  else
+	    {
+	      cout << uname << " not found." << endl;
+	    }
+
+	  break;
+	  
 	case '3':
 	  cout << endl;
 	  cout << "Sorry, this feature is not yet available." << endl;
