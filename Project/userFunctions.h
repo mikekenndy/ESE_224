@@ -5,7 +5,11 @@
 // USER FUNCTIONS:
 //
 // isValidUsername
-//  returns whether username exists in file
+// - returns whether username exists in file
+//
+// displayFile
+// - Prints the contents of the file stored in USER_HISTORY
+//   line by line
 
 
 #include<string>
@@ -47,15 +51,43 @@ bool isValidUsername(string username)
 	      return true;
 	    }
 	}
+      userFile.close();
+      return false;
     }
   else
     {
       cout << "Unable to open file '" << USER_HISTORY << "', please try again." << endl;
       return false;
     }
-  
-  userFile.close();
-  return false;
+}
+
+bool isCorrectPassword(string username, string password)
+{
+  ifstream userFile;
+  userFile.open(USER_HISTORY);
+  if(userFile.is_open())
+    {
+      string line;
+      while (getline(userFile, line))
+	{
+	  // Find line with correct username
+	  if (line.substr(0, 10).find(username) != string::npos)
+	    {
+	      if (line.substr(10, 20).find(password) != string::npos)
+		{
+		  userFile.close();
+		  return true;
+		}
+	      userFile.close();
+	      return false;
+	    }
+	}
+    }
+  else
+    {
+      cout << "Unable to open file '" << USER_HISTORY << "', please try again." << endl;
+      return false;
+    }
 }
 
 void displayUser(string username)

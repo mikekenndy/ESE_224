@@ -18,8 +18,12 @@
 
 using namespace std;
 
+// ----------------
+// GLOBAL VARIABLES
+// ----------------
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 const string WORD_BANK = "WordList.txt";
+string USER;
 
 // Remove return character that exists in text file
 string removeReturn(string phrase)
@@ -85,6 +89,15 @@ void newGame()
     }
 }
 
+void displayUserMsg()
+{
+  cout << endl;
+  printMessage("Hello " + USER, true, false);
+  printMessage("1. Play a game", true, false);
+  printMessage("2. Check your history", false, true);
+  cout << endl;
+}
+
 void displayGreeting()
 {
   cout << endl;
@@ -98,65 +111,116 @@ void displayGreeting()
   cout << endl;
 }
 
+// Handles I/O for users logging into account
+bool loginUser()
+{
+  string uname, password;
+  
+  cout << "Enter username: ";
+  getline(cin, uname);
+  
+  // Validate entered username
+  if (isValidUsername(uname))
+    {
+      cout << "Enter password: ";
+      getline(cin, password);
+      
+      // Validate entered password
+      if(isCorrectPassword(uname, password))
+	{
+	  cout << "\nWelcome " << uname << "!" << endl;
+	  USER = uname;
+	  return true;
+	}
+      else
+	cout << "\nIncorrect password." << endl;
+    }
+  else
+    {
+      cout << uname << " not found." << endl;
+    }
+  return false;
+}
+
 
 int main()
 {
   string input;
   char in;
+  bool loggedIn;
 
   // Continue prompting user for input until they quit
   while (in != 'q')
     {
 
-      displayGreeting();
-
-      cout << "Please select a number to continue, enter 'q' to quit: ";
-      getline(cin, input);
-      in = input[0];
-      if (input.length() > 1)
-	in = '0';
-
-      // Variables used in switch
-      string uname;
-	
-      switch(in)
+      if(loggedIn)
 	{
-	case '1':
-	  newGame();
-	  break;
-	case '2':
-	  cout << "Displaying UserAccountHistory.txt" << endl;
-	  displayFile("UserAccountHistory.txt");
+	  displayUserMsg();
 
-	  cout << "Enter username: ";
-	  getline(cin, uname);
-	  if (isValidUsername(uname))
-	    {
-	      cout << uname << " is in the file" << endl;
-	    }
-	  else
-	    {
-	      cout << uname << " not found." << endl;
-	    }
+	  cout << "Please select a number to continue, enter 'q' to quit: ";
+	  getline(cin, input);
+	  in = input[0];
+	  if(input.length() > 1)
+	    in = '0';
 
-	  break;
+	  switch(in)
+	    {
+	    case '1':
+	      newGame();
+	      break;
+
+	    case '2':
+	      cout << "This feature is not yet supported" << endl;
+	      break;
+
+	    case 'q':
+	      cout << endl;
+	      cout << "Application terminating..." << endl;
+	      break;
+	      
+	    default:
+	      cout << endl;
+	      cout << "Input not recognized, please try again." << endl;
+	      cout << endl;
+	    }
+	}
+      else
+	{
+	  displayGreeting();
+
+	  cout << "Please select a number to continue, enter 'q' to quit: ";
+	  getline(cin, input);
+	  in = input[0];
+	  if (input.length() > 1)
+	    in = '0';
+	
+	  switch(in)
+	    {
+	    case '1':
+	      newGame();
+	      break;
+	      
+	    case '2':
+	      loggedIn = loginUser();
+	      break;
 	  
-	case '3':
-	  cout << endl;
-	  cout << "Sorry, this feature is not yet available." << endl;
-	  cout << endl;
-	  break;
+	    case '3':
+	      cout << endl;
+	      cout << "Sorry, this feature is not yet available." << endl;
+	      cout << endl;
+	      break;
 	  
-	case 'q':
-	  cout << endl;
-	  cout << "Application terminating..." << endl;
-	  break;
-	  
-	default:
-	  cout << endl;
-	  cout << "Input not recognized, please try again." << endl;
-	  cout << endl;
-	  break;
+	    case 'q':
+	      cout << endl;
+	      cout << "Application terminating..." << endl;
+	      break;
+	      
+	    default:
+	      cout << endl;
+	      cout << "Input not recognized, please try again." << endl;
+	      cout << endl;
+	      break;
+	    }
 	}
     }
     
