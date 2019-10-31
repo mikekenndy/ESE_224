@@ -8,83 +8,73 @@ using namespace std;
 
 
 // Function to reverse order of integer vector
-vector<int> reverse(vector<int> v)
+void reverse(vector<int> &v)
 {
-  vector<int> rev;
-  for(int i = v.size(); i > 0; i--)
-    rev.push_back(v[i-1]);
-  return rev;
+  vector<int> rev = v;
+  v.clear();
+  for(int i = rev.size(); i > 0; i--)
+    v.push_back(rev[i-1]);
 }
 
 // Function to reverse order of char vector
-vector<char> reverse(vector<char> v)
+void reverse(vector<char> &v)
 {
-  vector<char> rev;
-  for(int i = v.size(); i > 0; i--)
-    rev.push_back(v[i-1]);
-  return rev;
+  vector<char> rev = v;
+  v.clear();
+  for(int i = rev.size(); i > 0; i--)
+    v.push_back(rev[i-1]);
 }
 
 // Function to reverse order of double vector
-vector<double> reverse(vector<double> v)
+void reverse(vector<double> &v)
 {
-  vector<double> rev;
-  for(int i = v.size(); i > 0; i--)
-    rev.push_back(v[i-1]);
-  return rev;
+  vector<double> rev = v;
+  v.clear();
+  for(int i = rev.size(); i > 0; i--)
+    v.push_back(rev[i-1]);
 }
 
 // Function to reverse order of float vector
-vector<float> reverse(vector<float> v)
+void reverse(vector<float> &v)
 {
-  vector<float> rev;
-  for(int i = v.size(); i > 0; i--)
-    rev.push_back(v[i-1]);
-  return rev;
+  vector<float> rev = v;
+  v.clear();
+  for(int i = rev.size(); i > 0; i--)
+    v.push_back(rev[i-1]);
 }
 
 // Function to reverse order of bool vector
-vector<bool> reverse(vector<bool> v)
+void reverse(vector<bool> &v)
 {
-  vector<bool> rev;
-  for(int i = v.size(); i > 0; i--)
-    rev.push_back(v[i-1]);
-  return rev;
+  vector<bool> rev = v;
+  v.clear();
+  for(int i = rev.size(); i > 0; i--)
+    v.push_back(rev[i-1]);
 }
 
 int main()
 {
   // Test <int> vector
   vector<int> int_vec = {1, 4, 2, 3, 6, 5};
-  vector<int> int_rev;
 
   // Test <char> vector
   vector<char> char_vec = {'c', 'f', 'a', 'b'};
-  vector<char> char_rev;
 
   // Test <double> vector
   vector<double> double_vec = {1.1, 2.2};
-  vector<double> double_rev;
 
   // Test <float> vector
   vector<float> float_vec = {1.81, 2.989, -0.123};
-  vector<float> float_rev;
 
   // Test <bool> vector
-  vector<bool> bool_vec = {true, false, true};
-  vector<bool> bool_rev;
+  vector<bool> bool_vec = {true, true, false};
   
-  int_rev = reverse(int_vec);
-  char_rev = reverse(char_vec);
-  double_rev = reverse(double_vec);
-  float_rev = reverse(float_vec);
-  bool_rev = reverse(bool_vec);
-
   cout << "Original int vector: ";
   for (int i : int_vec)
     cout << i;
   cout << "\nReversed int vector: ";
-  for (int i : int_rev)
+  reverse(int_vec);
+  for (int i : int_vec)
     cout << i;
   cout << endl << endl;
 
@@ -92,7 +82,8 @@ int main()
   for (char c : char_vec)
     cout << c;
   cout << "\nReversed char vector: ";
-  for (char c: char_rev)
+  reverse(char_vec);
+  for (char c: char_vec)
     cout << c;
   cout << endl << endl;
 
@@ -100,7 +91,8 @@ int main()
   for (double d:double_vec)
     cout << d << " ";
   cout << "\nReversed double vector: ";
-  for (double d:double_rev)
+  reverse(double_vec);
+  for (double d:double_vec)
     cout << d << " ";
   cout << endl << endl;
 
@@ -108,7 +100,8 @@ int main()
   for (float f:float_vec)
     cout << f << " ";
   cout << "\nReversed float vector: ";
-  for (float f:float_rev)
+  reverse(float_vec);
+  for (float f:float_vec)
     cout << f << " ";
   cout << endl << endl;
 
@@ -116,7 +109,8 @@ int main()
   for (bool b:bool_vec)
     cout << b << " ";
   cout << "\nReversed bool vector: ";
-  for(bool b:bool_rev)
+  reverse(bool_vec);
+  for(bool b:bool_vec)
     cout << b << " ";
   cout << endl;
   
