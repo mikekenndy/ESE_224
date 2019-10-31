@@ -81,6 +81,5 @@ int main()
   else
     cout << "'" << input << "' is NOT a palindrome." << endl;
 
-
   return 0;
 }
