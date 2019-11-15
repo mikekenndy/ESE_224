@@ -3,7 +3,6 @@
 
 // Class responsible for running hangman game
 
-#include<iostream>
 #include<string>
 #include"hangman_exceptions.h"
 #include"game_board.h"

@@ -1,0 +1,20 @@
+// Mike Kennedy - 108715992
+// ESE224 - Hangman Project
+
+// Super class to house accounts
+
+using namespace std;
+
+class Account
+{
+ protected:
+  string username;
+  string password;
+  
+ public:
+  virtual void login()
+  {
+    cout << "Log in!" << endl;
+  }    
+  
+};

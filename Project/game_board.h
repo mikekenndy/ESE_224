@@ -3,7 +3,6 @@
 
 // Game Board: Class responsible for providing user with game interface
 
-#include<iostream>
 #include "basicFunctions.cpp"
 
 using namespace std;

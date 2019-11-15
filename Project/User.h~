@@ -1,0 +1,46 @@
+// Mike Kennedy - 108715992
+// ESE 224 - Hangman Project
+
+// Class to handle regular users (non - admin)
+
+#include"Account.h"
+using namespace std;
+
+class User: public Account
+{
+ private:
+  int wins, losses, win_streak;
+  double win_percent;
+  string last_play;
+
+ public:
+
+  // Default Constructor
+  User(string username, string password)
+    {
+      this->username = username;
+      this->password = password;
+      wins = losses = win_streak = 0;
+      win_percent = 0;
+    }
+
+  // Constructor with parameters
+  User(string username, string password, int wins, int losses,
+       int win_streak, double win_percent, string last_play)
+    {
+      this->wins = wins;
+      this->losses = losses;
+      this->win_streak = win_streak;
+      this->win_percent = win_percent;
+      this->last_play = last_play;
+    }
+
+  
+  void readHistory()
+  {
+    cout << "Reading history!" << endl;
+  }
+
+  string getUsername() {return this->username;}
+
+};

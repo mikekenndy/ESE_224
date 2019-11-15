@@ -8,11 +8,13 @@
 // - Draw hangman figure
 // - Display '_' for unknown characters
 // - Display correctly guess characters
+//
 // 
 // Part 2:
-//
+// all users to sign in  and play game using file 'UserAccountHistory.txt' as database
 
 #include<iostream>
+#include"User.h"
 #include"hangman.h"
 #include"userFunctions.h"
 
@@ -25,6 +27,7 @@ const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 const string WORD_BANK = "WordList.txt";
 string USER;
 
+
 // Remove return character that exists in text file
 string removeReturn(string phrase)
 {
@@ -35,6 +38,7 @@ string removeReturn(string phrase)
   return newPhrase;
 }
 
+
 bool validInput(string input)
 {
   if (input.length() > 1)
@@ -43,7 +47,8 @@ bool validInput(string input)
   return invalids.find(input) == string::npos;
 }
 
-void newGame()
+
+void newGame(string username)
 {
   string phrase = loadRandomWord(WORD_BANK);
   phrase = removeReturn(phrase);
@@ -87,7 +92,12 @@ void newGame()
       else
 	cout << "\nError, invalid input, try again" << endl;
     }
+
+  // If user is logged in, update their information in the file
+  if(!username.empty())
+    updateStats(username, h.gameWon(), h.getPhrase());
 }
+
 
 void displayUserMsg()
 {
@@ -97,6 +107,7 @@ void displayUserMsg()
   printMessage("2. Check your history", false, true);
   cout << endl;
 }
+
 
 void displayGreeting()
 {
@@ -111,8 +122,9 @@ void displayGreeting()
   cout << endl;
 }
 
+
 // Handles I/O for users logging into account
-bool loginUser()
+string loginUser()
 {
   string uname, password;
   
@@ -130,29 +142,74 @@ bool loginUser()
 	{
 	  cout << "\nWelcome " << uname << "!" << endl;
 	  USER = uname;
-	  return true;
+	  return uname;
 	}
       else
 	cout << "\nIncorrect password." << endl;
     }
   else
-    {
-      cout << uname << " not found." << endl;
-    }
-  return false;
+    cout << uname << " not found." << endl;
+  return NULL;
 }
 
 
 int main()
 {
   string input;
+  string currentUser;
   char in;
-  bool loggedIn;
+  bool loggedIn = false;
 
+  //
+  // Uncomment following section for debugging:
+  //
+  cout << "-- TEST MODE --" << endl;
+  vector<User> user_vector = readAccountHistory();
+
+  for (int i = 0; i < user_vector.size(); i++)
+    cout << "User: " << user_vector[i].getUsername() << endl;
+
+  cout << "Login as " << user_vector[0].getUsername() << endl;
+  cout << "Password: ";
+  string pass;
+  getline(cin, pass);
+  user_vector[0].login(pass);
+  cout << user_vector[0].getUsername() << " streak: " << user_vector[0].getStreak() << endl;
+      
+  // for(int i = 0; i < 2; i++)
+  //   {
+  //     cout << "Enter uname: ";
+  //     getline(cin, uname);
+
+  //     cout << "PW: ";
+  //     getline(cin, pw);
+
+  //     User tmp(uname, pw);
+  //     user_vector.push_back(tmp);
+  //   }
+
+  // User x = user_vector.front();
+  // cout << "Username: " << x.getUsername() << endl;
+
+  // x = user_vector[0];
+  // cout << "Username[0]: " << x.getUsername() << endl;
+  // x = user_vector[1];
+  // cout << "Username[1]: " << x.getUsername() << endl;
+
+  in = 'q';
+  // resetFile();
+  // string uname, pw;
+  // cout << "Create a username: ";
+  // getline(cin, uname);
+  // cout << "password: ";
+  // getline(cin, pw);
+  // createNewUser(uname, pw);
+
+  
   // Continue prompting user for input until they quit
   while (in != 'q')
     {
-
+      // Display LOGGED IN menu
       if(loggedIn)
 	{
 	  displayUserMsg();
@@ -166,11 +223,11 @@ int main()
 	  switch(in)
 	    {
 	    case '1':
-	      newGame();
+	      newGame(currentUser);
 	      break;
 
 	    case '2':
-	      cout << "This feature is not yet supported" << endl;
+	      displayUser(currentUser);
 	      break;
 
 	    case 'q':
@@ -184,6 +241,7 @@ int main()
 	      cout << endl;
 	    }
 	}
+      // Display DEFAULT menu
       else
 	{
 	  displayGreeting();
@@ -197,11 +255,12 @@ int main()
 	  switch(in)
 	    {
 	    case '1':
-	      newGame();
+	      newGame(currentUser);
 	      break;
 	      
 	    case '2':
-	      loggedIn = loginUser();
+	      currentUser = loginUser();
+	      loggedIn = true;
 	      break;
 	  
 	    case '3':

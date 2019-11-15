@@ -1,2 +1,6 @@
       Name  password    Wins  Losses    WinPct  WinStreak LastPlay    
-      Mike   asdf123       2       1       25%          1 fireman     
+      Mike   asdf123       1       4        20           0Horses       
+     Tommy   asdf321       2       5        15           0-           
+      Bill   asdf123       3       6       2.5           0-           
+
+      asdf      qwer       0       9       1.0           0-           
