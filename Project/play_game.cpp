@@ -16,6 +16,7 @@
 // all users to sign in  and play game using file 'UserAccountHistory.txt' as database
 
 #include<iostream>
+#include<math.h>
 #include"User.h"
 #include"hangman.h"
 #include"userFunctions.h"
@@ -27,25 +28,6 @@ using namespace std;
 // ----------------
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 const string WORD_BANK = "WordList.txt";
-
-// ----------------
-// EXCEPTIONS
-// ----------------
-// struct InvalidUsername : public exception
-// {
-//   const char * what () const throw()
-//   {
-//     return "Username not found.";
-//   }
-// };
-
-// struct InvalidPassword : public exception
-// {
-//   const char * what () const throw()
-//   {
-//     return "Incorrect password.";
-//   }
-// };
 
 
 
@@ -93,7 +75,7 @@ vector<User> readAccountHistory()
 	  losses = stoi(line.substr(35, 8));
 
 	  // Get winpercent from line
-	  winpct = std::stod(line.substr(43, 10));
+	  winpct = std::stod(line.substr(36, 10));
 
 	  // Get winstreak from line
 	  winstreak = stoi(line.substr(46, 12));
@@ -223,9 +205,13 @@ void displayHistory(User user)
   cout << endl;
   cout << "Wins:\t\t" << user.getWins() << endl;
   cout << "Losses:\t\t" << user.getLosses() << endl;
-  cout << "Win Percentage:\t" << user.getWinPercent() << endl;
+  cout << "Win Percentage:\t" << round(user.getWinPercent() * 10000.0)/100.0 << "%" << endl;
   cout << "Win streak:\t" << user.getStreak() << endl;
-  cout << "Last play:\t" << user.getLastPlay() << endl;
+  string lastplay = user.getLastPlay();
+  if(lastplay == "-")
+    cout << "Last play:\tNo games played yet." << endl;
+  else
+    cout << "Last play:\t" << user.getLastPlay() << endl;
 }
 
 

@@ -1,5 +1,5 @@
       Name  password    Wins  losses    WinPct   WinStreak LastPlay   
-      Bill   asdf123       0       0         0           0-           
       Jeff   asdf123       0       0         0           0-           
       Mike   asdf123       2       9  0.181818           0landfill    
        Tom   asdf123       4       3  0.571429           2grabbed     
+      Bill   asdf123       2       4  0.333333           0pancake     
