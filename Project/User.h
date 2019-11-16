@@ -6,7 +6,12 @@
 // - Cannot access information without logging in
 
 #include"Account.h"
+#include<fstream>
+#include<iomanip>
 using namespace std;
+
+const string USER_HISTORY = "UserAccountHistory.txt";
+
 
 // User not logged in exception
 struct UserNotLoggedIn : public exception
@@ -18,6 +23,8 @@ struct UserNotLoggedIn : public exception
 };
 
 
+
+
 class User: public Account
 {
  private:
@@ -25,9 +32,41 @@ class User: public Account
   double win_percent;
   string last_play;
 
- public:
 
-  // Default Constructor
+  void writeToFile()
+  {
+    // Read file
+    ifstream file_read(USER_HISTORY);
+    if(!file_read.is_open())
+      {
+	cout << "Error reading file '" << USER_HISTORY << "'" << endl;
+	return;
+      }
+    string NEW_FILE_TEXT, line;
+
+    while(getline(file_read, line))
+      if (line.substr(0, 10).find(this->username) == string::npos)
+	NEW_FILE_TEXT += line + "\n";
+
+    file_read.close();
+
+    // Write to file
+    ofstream file_write(USER_HISTORY);
+    if(!file_write.is_open())
+      {
+	cout << "Error writing to file '" << USER_HISTORY << "'" << endl;
+	return;
+      }
+    file_write << NEW_FILE_TEXT;
+    file_write << setw(10) << right << this->username << setw(10) << right << this->password;
+    file_write << setw(8) << right << this->wins << setw(8) << right << this->losses;
+    file_write << setw(10) << right << this->win_percent << setw(12) << right << this->win_streak;
+    file_write << setw(12) << left << this->last_play;
+    file_write.close();
+  }
+      
+ public:
+  // Constructor with only username, password
   User(string username, string password)
     {
       this->username = username;
@@ -36,6 +75,7 @@ class User: public Account
       win_percent = 0;
     }
 
+  
   // Constructor with parameters
   User(string username, string password, int wins, int losses,
        double win_percent, int win_streak, string last_play)
@@ -49,12 +89,34 @@ class User: public Account
       this->last_play = last_play;
     }
 
-  
+
   void readHistory()
   {
     cout << "Reading history!" << endl;
   }
 
+
+  void updateHistory(string last_play, bool game_won)
+  {
+    // Update values
+    this->last_play = last_play;
+    if(game_won)
+      {
+	wins++;
+	win_streak++;
+      }
+    else
+      {
+	losses++;
+	win_streak = 0;
+      }
+    win_percent = ((double)wins / ((double)wins + (double)losses));
+    
+    // Write back to file
+    writeToFile();    
+  }
+
+  // Getters / setters
   string getUsername(){return this->username;}
   int getWins()
   {

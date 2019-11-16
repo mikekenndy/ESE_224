@@ -1,6 +1,5 @@
-      Name  password    Wins  Losses    WinPct  WinStreak LastPlay    
-      Mike   asdf123       1       4        20           0Horses       
-     Tommy   asdf321       2       5        15           0-           
-      Bill   asdf123       3       6       2.5           0-           
-
-      asdf      qwer       0       9       1.0           0-           
+      Name  password    Wins  losses    WinPct   WinStreak LastPlay   
+      Bill   asdf123       0       0         0           0-           
+      Jeff   asdf123       0       0         0           0-           
+      Mike   asdf123       2       9  0.181818           0landfill    
+       Tom   asdf123       4       3  0.571429           2grabbed     

@@ -1,6 +1,8 @@
 // Mike Kennedy - 108715992
 // ESE 224 - Hangman Project
 
+// Original
+
 // Project description
 // Part 1:
 // Enable a user to play a game of hangman using C++
@@ -25,7 +27,91 @@ using namespace std;
 // ----------------
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 const string WORD_BANK = "WordList.txt";
-string USER;
+
+// ----------------
+// EXCEPTIONS
+// ----------------
+// struct InvalidUsername : public exception
+// {
+//   const char * what () const throw()
+//   {
+//     return "Username not found.";
+//   }
+// };
+
+// struct InvalidPassword : public exception
+// {
+//   const char * what () const throw()
+//   {
+//     return "Incorrect password.";
+//   }
+// };
+
+
+
+
+// Remove white spaces and return string without them
+string removeWhiteSpaces(string input)
+{
+  string no_white;
+  for (int i = 0; input[i]; i++)
+    if (input[i] != ' ')
+      no_white += input[i];
+  return no_white;
+}
+
+
+// Scrape file and return vector containing all users
+vector<User> readAccountHistory()
+{
+  vector<User> getUsers;
+  ifstream userFile;
+  userFile.open(USER_HISTORY);
+  
+  if(userFile.is_open())
+    {
+      // Variables:
+      string line;
+      string uname, password, lastplay;
+      int wins, losses, winstreak;
+      double winpct;
+
+      while(getline(userFile, line))
+	{
+	  // Get username from line
+	  uname = removeWhiteSpaces(line.substr(0,10));
+	  if(uname == "Name" || uname == "")  // Skip column titles
+	    continue;
+	  
+	  // Get password from line
+	  password = removeWhiteSpaces(line.substr(10,10));
+
+	  // Get wins from line
+	  wins = stoi(line.substr(20, 8));
+
+	  // Get losses from line
+	  losses = stoi(line.substr(35, 8));
+
+	  // Get winpercent from line
+	  winpct = std::stod(line.substr(43, 10));
+
+	  // Get winstreak from line
+	  winstreak = stoi(line.substr(46, 12));
+
+	  // Get last play from line
+	  lastplay = removeWhiteSpaces(line.substr(58, 12));
+	    
+	  User user(uname, password, wins, losses, winpct,
+		    winstreak, lastplay);
+	  getUsers.push_back(user);
+	}
+      userFile.close();
+    }
+  else
+    cout << "Error: Unable to open file '" << USER_HISTORY << "'" << endl;
+
+  return getUsers;
+}
 
 
 // Remove return character that exists in text file
@@ -39,6 +125,7 @@ string removeReturn(string phrase)
 }
 
 
+// Checks whether user input to menu is valid
 bool validInput(string input)
 {
   if (input.length() > 1)
@@ -48,7 +135,8 @@ bool validInput(string input)
 }
 
 
-void newGame(string username)
+// Start a new game of hangman
+void newGame(User &user)
 {
   string phrase = loadRandomWord(WORD_BANK);
   phrase = removeReturn(phrase);
@@ -94,15 +182,15 @@ void newGame(string username)
     }
 
   // If user is logged in, update their information in the file
-  if(!username.empty())
-    updateStats(username, h.gameWon(), h.getPhrase());
+  if(user.isLoggedIn())
+    user.updateHistory(h.getPhrase(), h.gameWon());
 }
 
 
-void displayUserMsg()
+void displayUserMsg(User user)
 {
   cout << endl;
-  printMessage("Hello " + USER, true, false);
+  printMessage("Hello " + user.getUsername(), true, false);
   printMessage("1. Play a game", true, false);
   printMessage("2. Check your history", false, true);
   cout << endl;
@@ -123,96 +211,80 @@ void displayGreeting()
 }
 
 
+void displayHistory(User user)
+{
+  // Ensure user is logged in
+  if(!user.isLoggedIn())
+    {
+      cout << "Error: User not logged in." << endl;
+      return;
+    }
+
+  cout << endl;
+  cout << "Wins:\t\t" << user.getWins() << endl;
+  cout << "Losses:\t\t" << user.getLosses() << endl;
+  cout << "Win Percentage:\t" << user.getWinPercent() << endl;
+  cout << "Win streak:\t" << user.getStreak() << endl;
+  cout << "Last play:\t" << user.getLastPlay() << endl;
+}
+
+
 // Handles I/O for users logging into account
-string loginUser()
+User loginUser(vector<User> user_vector)
 {
   string uname, password;
-  
+  User user("TEMP", "TEMP");
+
+  // Check valid username
   cout << "Enter username: ";
   getline(cin, uname);
   
-  // Validate entered username
-  if (isValidUsername(uname))
+  for(int i = 0; i < user_vector.size(); i++)
     {
-      cout << "Enter password: ";
-      getline(cin, password);
-      
-      // Validate entered password
-      if(isCorrectPassword(uname, password))
+      if(user_vector[i].getUsername() == uname)
 	{
-	  cout << "\nWelcome " << uname << "!" << endl;
-	  USER = uname;
-	  return uname;
+	  user = user_vector[i];
+	  break;
 	}
-      else
-	cout << "\nIncorrect password." << endl;
+    }
+  if(user.getUsername() == "TEMP")
+    throw InvalidUsername();
+
+  
+  // Check valid password
+  cout << "Enter password: ";
+  getline(cin, password);
+      
+  user.login(password);
+  if(user.isLoggedIn())
+    {
+      cout << "\nWelcome " << uname << "!" << endl;
+      return user;
     }
   else
-    cout << uname << " not found." << endl;
-  return NULL;
+    throw InvalidPassword();
 }
 
 
 int main()
 {
-  string input;
-  string currentUser;
-  char in;
-  bool loggedIn = false;
-
-  //
-  // Uncomment following section for debugging:
-  //
-  cout << "-- TEST MODE --" << endl;
-  vector<User> user_vector = readAccountHistory();
-
-  for (int i = 0; i < user_vector.size(); i++)
-    cout << "User: " << user_vector[i].getUsername() << endl;
-
-  cout << "Login as " << user_vector[0].getUsername() << endl;
-  cout << "Password: ";
-  string pass;
-  getline(cin, pass);
-  user_vector[0].login(pass);
-  cout << user_vector[0].getUsername() << " streak: " << user_vector[0].getStreak() << endl;
-      
-  // for(int i = 0; i < 2; i++)
-  //   {
-  //     cout << "Enter uname: ";
-  //     getline(cin, uname);
-
-  //     cout << "PW: ";
-  //     getline(cin, pw);
-
-  //     User tmp(uname, pw);
-  //     user_vector.push_back(tmp);
-  //   }
-
-  // User x = user_vector.front();
-  // cout << "Username: " << x.getUsername() << endl;
-
-  // x = user_vector[0];
-  // cout << "Username[0]: " << x.getUsername() << endl;
-  // x = user_vector[1];
-  // cout << "Username[1]: " << x.getUsername() << endl;
-
-  in = 'q';
   // resetFile();
-  // string uname, pw;
-  // cout << "Create a username: ";
-  // getline(cin, uname);
-  // cout << "password: ";
-  // getline(cin, pw);
-  // createNewUser(uname, pw);
-
+  // createNewUser("Mike", "asdf123");
+  // createNewUser("Tom", "asdf123");
+  // createNewUser("Bill", "asdf123");
+  // createNewUser("Jeff", "asdf123");
+  string input;
+  char in;
+  User currentUser("TEMP", "TEMP");
+  vector<User> user_vector = readAccountHistory();
   
   // Continue prompting user for input until they quit
   while (in != 'q')
     {
       // Display LOGGED IN menu
-      if(loggedIn)
+      if(currentUser.getUsername() != "TEMP")
 	{
-	  displayUserMsg();
+	  displayUserMsg(currentUser);
 
 	  cout << "Please select a number to continue, enter 'q' to quit: ";
 	  getline(cin, input);
@@ -227,7 +299,7 @@ int main()
 	      break;
 
 	    case '2':
-	      displayUser(currentUser);
+	      displayHistory(currentUser);
 	      break;
 
 	    case 'q':
@@ -259,8 +331,18 @@ int main()
 	      break;
 	      
 	    case '2':
-	      currentUser = loginUser();
-	      loggedIn = true;
+	      try
+		{
+		  currentUser = loginUser(user_vector);
+		}
+	      catch (InvalidUsername u)
+		{
+		  cout << "Invalid username." << endl;
+		}
+	      catch (InvalidPassword p)
+		{
+		  cout << "Invalid password." << endl;
+		}
 	      break;
 	  
 	    case '3':

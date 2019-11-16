@@ -5,12 +5,34 @@
 
 using namespace std;
 
+// ----------------
+// EXCEPTIONS
+// ----------------
+struct InvalidUsername : public exception
+{
+  const char * what () const throw()
+  {
+    return "Username not found.";
+  }
+};
+
+struct InvalidPassword : public exception
+{
+  const char * what () const throw()
+  {
+    return "Incorrect password.";
+  }
+};
+
+
+
+
 class Account
 {
  protected:
   string username;
   string password;
-  bool loggedin;
+  bool loggedin = false;
   
  public:  
   virtual void login(string password)    
@@ -19,6 +41,8 @@ class Account
       loggedin = true;
     else
       loggedin = false;
-  }    
+  }
+
+  virtual bool isLoggedIn(){return loggedin;}    
   
 };
