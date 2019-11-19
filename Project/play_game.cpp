@@ -219,7 +219,8 @@ void displayUserMsg(User user)
   cout << endl;
   printMessage("Hello " + user.getUsername(), true, false);
   printMessage("1. Play a game", true, false);
-  printMessage("2. Check your history", false, true);
+  printMessage("2. Check your history", false, false);
+  printMessage("3. Logout", false, true);
   cout << endl;
 }
 
@@ -305,7 +306,8 @@ void displayAdminMessage()
   printMessage("Manage your word list", true, false);
   printMessage("1. Sort the list alphabetically", true , false);
   printMessage("2. Add a word to the list", false, false);
-  printMessage("3. Delete a word from the list", false, true);
+  printMessage("3. Delete a word from the list", false, false);
+  printMessage("4. Logout", false, true);
   cout << endl;
 }
 
@@ -495,6 +497,10 @@ int main()
 	      word_list = delete_word();
 	      break;
 
+	    case '4':
+	      currentUser.logout();
+	      break;
+
 	    default:
 	      cout << endl;
 	      cout << "Input not recognized, please try again." << endl;
@@ -523,6 +529,10 @@ int main()
 
 	    case '2':
 	      displayHistory(currentUser);
+	      break;
+
+	    case '3':
+	      currentUser.logout();
 	      break;
 
 	    case 'q':

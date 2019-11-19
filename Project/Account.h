@@ -46,6 +46,15 @@ class Account
       throw InvalidPassword();
   }
 
+  virtual void logout()
+  {
+    username = "TEMP";
+    password = "";
+    loggedin = false;
+    admin = false;
+  }
+
+
   virtual void login(string password){loggedin = (password == this->password);}
   virtual bool is_admin(){return admin;}
   virtual bool isLoggedIn(){return loggedin;}    
