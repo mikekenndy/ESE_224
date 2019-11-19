@@ -17,6 +17,7 @@
 
 #include<iostream>
 #include<math.h>
+#include<algorithm>
 #include"Users.h"
 #include"hangman.h"
 #include"userFunctions.h"
@@ -46,7 +47,8 @@ struct FileReadFailure : public exception
 //-------------------------------------------------------------
 //
 // START MISCELLANEOUS FUNCTIONS
-
+//
+//-------------------------------------------------------------
 
 // Remove white spaces and return string without them
 string removeWhiteSpaces(string input)
@@ -74,11 +76,11 @@ bool validInput(string input)
 {
   if (input.length() > 1)
     return false;
-
   return invalids.find(input) == string::npos;
 }
 
-
+//-------------------------------------------------------------
+//
 // END MISCELLANEOUS FUNCTIONS
 //
 //-------------------------------------------------------------
@@ -189,16 +191,6 @@ void newGame(User &user)
 }
 
 
-void displayUserMsg(User user)
-{
-  cout << endl;
-  printMessage("Hello " + user.getUsername(), true, false);
-  printMessage("1. Play a game", true, false);
-  printMessage("2. Check your history", false, true);
-  cout << endl;
-}
-
-
 void displayGreeting()
 {
   cout << endl;
@@ -209,6 +201,25 @@ void displayGreeting()
   printMessage("1. start a new game (part 1)", true, false);
   printMessage("2. sign in as user (part 2)", false, false);
   printMessage("3. sign in as admin (part 2)", false, true);
+  cout << endl;
+}
+
+
+
+
+//-------------------------------------------------------------
+//
+// START USER FUNCTIONS
+//
+//-------------------------------------------------------------
+
+
+void displayUserMsg(User user)
+{
+  cout << endl;
+  printMessage("Hello " + user.getUsername(), true, false);
+  printMessage("1. Play a game", true, false);
+  printMessage("2. Check your history", false, true);
   cout << endl;
 }
 
@@ -272,9 +283,20 @@ User loginUser(vector<User> user_vector)
 }
 
 
-//--------------------------------------------------
+//-------------------------------------------------------------
+//
+// END USER FUNCTIONS
+//
+//-------------------------------------------------------------
+
+
+
+
+//-------------------------------------------------------------
 //
 // START ADMIN FUNCTIONS
+//
+//-------------------------------------------------------------
 
 
 void displayAdminMessage()
@@ -403,9 +425,26 @@ vector<string> delete_word()
 }
 
 
+void sort_list()
+{
+  // Get updated word list from file
+  vector<string> list = populate_word_list();
+
+  // Sort list
+  sort(list.begin(), list.end());
+
+  // Write list back to file
+  write_back_tofile(list);
+  cout << "List sorted alphabetically." << endl;
+}
+
+
+//-------------------------------------------------------------
+//
 // END ADMIN FUNCTIONS
 //
-//--------------------------------------------------
+//-------------------------------------------------------------
+
 
 
 
@@ -445,7 +484,7 @@ int main()
 	  switch(in)
 	    {
 	    case '1':
-	      cout << "Sorting..." << endl;
+	      sort_list();
 	      break;
 
 	    case '2':
