@@ -25,6 +25,10 @@ struct UserNotLoggedIn : public exception
 
 
 
+// -------------------------------------------------
+// ----- User class
+// -------------------------------------------------
+
 class User: public Account
 {
  private:
@@ -150,3 +154,18 @@ class User: public Account
   }
 
 };
+
+
+
+
+// -------------------------------------------------
+// ----- Administrator class
+// -------------------------------------------------
+
+class Administrator : public Account
+{
+ private:
+  int x;
+ public:
+  double y;
+}

@@ -17,7 +17,7 @@
 
 #include<iostream>
 #include<math.h>
-#include"User.h"
+#include"Users.h"
 #include"hangman.h"
 #include"userFunctions.h"
 
@@ -29,7 +29,23 @@ using namespace std;
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
 const string WORD_BANK = "WordList.txt";
 
+// ---------------
+// Exceptions
+// ---------------
+struct FileReadFailure : public exception
+{
+  const char * what () const throw()
+  {
+    return "Cannot access specifiec file.";
+  }
+};
 
+
+
+
+//-------------------------------------------------------------
+//
+// START MISCELLANEOUS FUNCTIONS
 
 
 // Remove white spaces and return string without them
@@ -41,6 +57,31 @@ string removeWhiteSpaces(string input)
       no_white += input[i];
   return no_white;
 }
+
+// Remove return character that exists in text file
+string removeReturn(string phrase)
+{
+  string newPhrase = "";
+  for (int i = 0; i < phrase.length(); i++)
+    if (phrase[i] != '\r')
+      newPhrase += phrase[i];
+  return newPhrase;
+}
+
+
+// Checks whether user input to menu is valid
+bool validInput(string input)
+{
+  if (input.length() > 1)
+    return false;
+
+  return invalids.find(input) == string::npos;
+}
+
+
+// END MISCELLANEOUS FUNCTIONS
+//
+//-------------------------------------------------------------
 
 
 // Scrape file and return vector containing all users
@@ -93,27 +134,6 @@ vector<User> readAccountHistory()
     cout << "Error: Unable to open file '" << USER_HISTORY << "'" << endl;
 
   return getUsers;
-}
-
-
-// Remove return character that exists in text file
-string removeReturn(string phrase)
-{
-  string newPhrase = "";
-  for (int i = 0; i < phrase.length(); i++)
-    if (phrase[i] != '\r')
-      newPhrase += phrase[i];
-  return newPhrase;
-}
-
-
-// Checks whether user input to menu is valid
-bool validInput(string input)
-{
-  if (input.length() > 1)
-    return false;
-
-  return invalids.find(input) == string::npos;
 }
 
 
@@ -252,23 +272,201 @@ User loginUser(vector<User> user_vector)
 }
 
 
+//--------------------------------------------------
+//
+// START ADMIN FUNCTIONS
+
+
+void displayAdminMessage()
+{
+  cout << endl;
+  printMessage("Manage your word list", true, false);
+  printMessage("1. Sort the list alphabetically", true , false);
+  printMessage("2. Add a word to the list", false, false);
+  printMessage("3. Delete a word from the list", false, true);
+  cout << endl;
+}
+
+
+// Check whether word exists within file
+bool word_exists(vector<string> list, string word)
+{
+  for(int i = 0; i < list.size(); i++)
+    if(word == list[i])
+      return true;
+  return false;
+}
+
+
+void loginAdmin(User &admin)
+{
+  string password;
+  cout << "Enter admin password: ";
+  getline(cin, password);
+  password = removeWhiteSpaces(password);
+  try
+    {
+      admin.admin_login(password);
+      cout << "Login successful." << endl;
+    }
+  catch (InvalidPassword e)
+    {
+      cout << "Error: Incorrect password." << endl;
+    }
+}
+
+
+// Populate string vector with puzzles from file
+vector<string> populate_word_list()
+{
+  // Read file
+  ifstream word_file(WORD_BANK);
+  if(!word_file.is_open())
+    {
+      cout << "Error reading file '" << WORD_BANK << "'" << endl;
+      throw FileReadFailure();
+    }
+  vector<string> list;
+  string line;
+  while(getline(word_file, line))
+    {
+      line = removeReturn(line);
+      list.push_back(line);
+    }
+
+  word_file.close();
+  return list;
+}
+
+
+void write_back_tofile(vector<string> word_list)
+{
+  ofstream word_file(WORD_BANK);
+  if(!word_file.is_open())
+    {
+      cout << "Could not open file '" << WORD_BANK << "'" << endl;
+      throw FileReadFailure();
+    }
+
+  for(int i = 0; i < word_list.size(); i++)
+    word_file << word_list[i] << endl;
+  word_file.close();      
+}
+
+
+vector<string> add_word()
+{
+  // Get present list
+  vector<string> word_list = populate_word_list();
+
+  // Determine what word to add
+  string add;
+  cout << "Enter the word or phrase you would like to add: ";
+  getline(cin, add);
+
+  if(word_exists(word_list, add))
+    {
+      cout << "Error: '" << add << "' is already present in the word bank." << endl;
+      return word_list;
+    }
+  word_list.push_back(add);
+  write_back_tofile(word_list);
+  cout << "'" << add << "' successfully added to word bank." << endl;
+  
+  return word_list;
+}
+
+
+vector<string> delete_word()
+{
+  // Get updated list
+  vector<string> word_list = populate_word_list();
+
+  // Determine what word to delete
+  string del;
+  cout << "Enter the word or phrase you would like to delete: ";
+  getline(cin, del);
+  
+  for(int i = 0; i < word_list.size(); i++)
+    {
+      if(del == word_list[i])
+	{	  
+	  word_list.erase (word_list.begin() + i);
+	  cout << "'" << del << "' successfully removed." << endl;
+	  write_back_tofile(word_list);
+	  return word_list;
+	}
+    }
+
+  cout << "'" << del << "' does not exist in the word bank." << endl;
+  return word_list;
+}
+
+
+// END ADMIN FUNCTIONS
+//
+//--------------------------------------------------
+
+
+
+
 int main()
 {
   // resetFile();
-  // createNewUser("Mike", "asdf123");
-  // createNewUser("Tom", "asdf123");
-  // createNewUser("Bill", "asdf123");
-  // createNewUser("Jeff", "asdf123");
+  // // createNewUser("Mike", "asdf123");
+  // // createNewUser("Tom", "asdf123");
+  // // createNewUser("Bill", "asdf123");
+  // // createNewUser("Jeff", "asdf123");
   string input;
   char in;
   User currentUser("TEMP", "TEMP");
   vector<User> user_vector = readAccountHistory();
-  
+  vector<string> word_list;
+
   // Continue prompting user for input until they quit
   while (in != 'q')
     {
+      // ---------------------
+      // Display ADMIN menu
+      // ---------------------
+      if (currentUser.is_admin())
+	{
+	  displayAdminMessage();
+	  
+	  if(word_list.empty())
+	    word_list = populate_word_list();
+
+	  cout << "Please select a number to continue, enter 'q' to quit: ";
+	  getline(cin, input);
+	  in = input[0];
+	  if(input.length() > 1)
+	    in = '0';
+
+	  switch(in)
+	    {
+	    case '1':
+	      cout << "Sorting..." << endl;
+	      break;
+
+	    case '2':
+	      word_list = add_word();
+	      break;
+
+	    case '3':
+	      word_list = delete_word();
+	      break;
+
+	    default:
+	      cout << endl;
+	      cout << "Input not recognized, please try again." << endl;
+	      cout << endl;
+	    }
+	}
+      
+      // ---------------------
       // Display LOGGED IN menu
-      if(currentUser.getUsername() != "TEMP")
+      // ---------------------
+      else if(currentUser.getUsername() != "TEMP")
 	{
 	  displayUserMsg(currentUser);
 
@@ -299,7 +497,10 @@ int main()
 	      cout << endl;
 	    }
 	}
+      
+      // ---------------------
       // Display DEFAULT menu
+      // ---------------------
       else
 	{
 	  displayGreeting();
@@ -332,9 +533,10 @@ int main()
 	      break;
 	  
 	    case '3':
-	      cout << endl;
-	      cout << "Sorry, this feature is not yet available." << endl;
-	      cout << endl;
+	      loginAdmin(currentUser);
+	      // cout << endl;
+	      // cout << "Sorry, this feature is not yet available." << endl;
+	      // cout << endl;
 	      break;
 	  
 	    case 'q':

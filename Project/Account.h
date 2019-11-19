@@ -29,20 +29,25 @@ struct InvalidPassword : public exception
 
 class Account
 {
+ private:
+  string ADMIN_PASSWORD = "Password";
+  
  protected:
   string username;
   string password;
   bool loggedin = false;
+  bool admin = false;
   
  public:  
-  virtual void login(string password)    
+  virtual void admin_login(string password)
   {
-    if(password == this->password)
-      loggedin = true;
-    else
-      loggedin = false;
+    admin = (ADMIN_PASSWORD == password);
+    if (!admin)
+      throw InvalidPassword();
   }
 
+  virtual void login(string password){loggedin = (password == this->password);}
+  virtual bool is_admin(){return admin;}
   virtual bool isLoggedIn(){return loggedin;}    
   
 };
