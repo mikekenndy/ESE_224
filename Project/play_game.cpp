@@ -17,10 +17,13 @@
 
 #include<iostream>
 #include<math.h>
+#include<vector>
 #include<algorithm>
-#include"Users.h"
+#include"User.h"
 #include"hangman.h"
+#include"hangman_exceptions.h"
 #include"userFunctions.h"
+#include"basicFunctions.h"
 
 using namespace std;
 
@@ -28,7 +31,7 @@ using namespace std;
 // GLOBAL VARIABLES
 // ----------------
 const string invalids = "1234567890,.?!<>/\\'\"@#$%^&*(){}[]_-+=";
-const string WORD_BANK = "WordList.txt";
+const string WORD_BANK = "C:\\Programming\\C++\\ESE_224\\Project\\Hangman\\WordList.txt";
 
 // ---------------
 // Exceptions
@@ -142,52 +145,55 @@ vector<User> readAccountHistory()
 // Start a new game of hangman
 void newGame(User &user)
 {
-  string phrase = loadRandomWord(WORD_BANK);
-  phrase = removeReturn(phrase);
-  hangman h(phrase);
+	string phrase = loadRandomWord(WORD_BANK);
+	transform(phrase.begin(), phrase.end(), phrase.begin(), ::tolower); // Ensure phrase is lower case
+	cout << "Loading from '" << WORD_BANK << "'" << endl;
+	phrase = removeReturn(phrase);
+	hangman h(phrase);
 
-  char guess;
-  string input;
-  
-  while(true)
-    {
-      cout << "Enter guess: ";
-      getline(cin, input);
-      if(validInput(input))
+	char guess;
+	string input;
+
+	while(true)
 	{
-	  guess = input[0];
-	  try
-	    {
-	      h.guessLetter(guess);
-	      if (h.gameWon())
+		cout << "Enter guess: ";
+		getline(cin, input);
+		transform(input.begin(), input.end(), input.begin(), ::tolower); // Ensure guess is lowercase
+		if(validInput(input))
 		{
-		  cout << "Game won!" << endl;
-		  cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
-		  break;
-		}
-	      else if(h.gameLost())
-		{
-		  cout << "Game lost! :(" << endl;
-		  cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
-		  break;
-		}
-	      else
-		cout << h.guessesRemaining() << " incorrect guesses remaining!" << endl;
-	      
-	    }
-	  catch(CharAlreadyGuessed e)
-	    {
-	      cout << "Cannot guess the same letter twice!" << endl;
-	    }
-	  cout << endl;
-	}
-      else
-	cout << "\nError, invalid input, try again" << endl;
-    }
+			guess = input[0];
+			try
+			{
+				h.guessLetter(guess);
+				if (h.gameWon())
+				{
+					cout << "Game won!" << endl;
+					cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
+					break;
+				}
+				else if(h.gameLost())
+				{
+					cout << "Game lost! :(" << endl;
+					cout << "The correct phrase was '" << h.getPhrase() << "'" << endl;
+					break;
+				}
+				else
+					cout << h.guessesRemaining() << " incorrect guesses remaining!" << endl;
 
-  // If user is logged in, update their information in the file
-  if(user.isLoggedIn())
-    user.updateHistory(h.getPhrase(), h.gameWon());
+			}
+			catch(CharAlreadyGuessed e)
+			{
+				cout << "Cannot guess the same letter twice!" << endl;
+			}
+			cout << endl;
+		}
+		else
+			cout << "\nError, invalid input, try again" << endl;
+	}
+
+	// If user is logged in, update their information in the file
+	if(user.isLoggedIn())
+		user.updateHistory(h.getPhrase(), h.gameWon());
 }
 
 
@@ -387,6 +393,7 @@ vector<string> add_word()
   string add;
   cout << "Enter the word or phrase you would like to add: ";
   getline(cin, add);
+  transform(add.begin(), add.end(), add.begin(), ::tolower); // Ensure guess is lowercase
 
   if(word_exists(word_list, add))
     {
@@ -450,159 +457,158 @@ void sort_list()
 
 
 
+//-------------------------------------------------------------
+//
+// MAIN METHOD
+//
+//-------------------------------------------------------------
 
 int main()
 {
-  // resetFile();
-  // // createNewUser("Mike", "asdf123");
-  // // createNewUser("Tom", "asdf123");
-  // // createNewUser("Bill", "asdf123");
-  // // createNewUser("Jeff", "asdf123");
-  string input;
-  char in;
-  User currentUser("TEMP", "TEMP");
-  vector<User> user_vector = readAccountHistory();
-  vector<string> word_list;
+	// resetFile();
+	// // createNewUser("Mike", "asdf123");
+	// // createNewUser("Tom", "asdf123");
+	// // createNewUser("Bill", "asdf123");
+	// // createNewUser("Jeff", "asdf123");
+	string input;
+	char in = '0';
+	User currentUser("TEMP", "TEMP");
+	vector<User> user_vector = readAccountHistory();
+	vector<string> word_list;
 
-  // Continue prompting user for input until they quit
-  while (in != 'q')
-    {
-      // ---------------------
-      // Display ADMIN menu
-      // ---------------------
-      if (currentUser.is_admin())
+	// Continue prompting user for input until they quit
+	while (in != 'q')
 	{
-	  displayAdminMessage();
-	  
-	  if(word_list.empty())
-	    word_list = populate_word_list();
-
-	  cout << "Please select a number to continue, enter 'q' to quit: ";
-	  getline(cin, input);
-	  in = input[0];
-	  if(input.length() > 1)
-	    in = '0';
-
-	  switch(in)
-	    {
-	    case '1':
-	      sort_list();
-	      break;
-
-	    case '2':
-	      word_list = add_word();
-	      break;
-
-	    case '3':
-	      word_list = delete_word();
-	      break;
-
-	    case '4':
-	      currentUser.logout();
-	      break;
-
-	    default:
-	      cout << endl;
-	      cout << "Input not recognized, please try again." << endl;
-	      cout << endl;
-	    }
-	}
-      
-      // ---------------------
-      // Display LOGGED IN menu
-      // ---------------------
-      else if(currentUser.getUsername() != "TEMP")
-	{
-	  displayUserMsg(currentUser);
-
-	  cout << "Please select a number to continue, enter 'q' to quit: ";
-	  getline(cin, input);
-	  in = input[0];
-	  if(input.length() > 1)
-	    in = '0';
-
-	  switch(in)
-	    {
-	    case '1':
-	      newGame(currentUser);
-	      break;
-
-	    case '2':
-	      displayHistory(currentUser);
-	      break;
-
-	    case '3':
-	      currentUser.logout();
-	      break;
-
-	    case 'q':
-	      cout << endl;
-	      cout << "Application terminating..." << endl;
-	      break;
-	      
-	    default:
-	      cout << endl;
-	      cout << "Input not recognized, please try again." << endl;
-	      cout << endl;
-	    }
-	}
-      
-      // ---------------------
-      // Display DEFAULT menu
-      // ---------------------
-      else
-	{
-	  displayGreeting();
-
-	  cout << "Please select a number to continue, enter 'q' to quit: ";
-	  getline(cin, input);
-	  in = input[0];
-	  if (input.length() > 1)
-	    in = '0';
-	
-	  switch(in)
-	    {
-	    case '1':
-	      newGame(currentUser);
-	      break;
-	      
-	    case '2':
-	      try
+		// ---------------------
+		// Display ADMIN menu
+		// ---------------------
+		if (currentUser.is_admin())
 		{
-		  currentUser = loginUser(user_vector);
+			displayAdminMessage();
+
+			if(word_list.empty())
+				word_list = populate_word_list();
+
+			cout << "Please select a number to continue, enter 'q' to quit: ";
+			getline(cin, input);
+			in = input[0];
+			if(input.length() > 1)
+				in = '0';
+
+			switch(in)
+			{
+			case '1':
+				sort_list();
+				break;
+
+			case '2':
+				word_list = add_word();
+				break;
+
+			case '3':
+				word_list = delete_word();
+				break;
+
+			case '4':
+				currentUser.logout();
+				break;
+
+			default:
+				cout << endl;
+				cout << "Input not recognized, please try again." << endl;
+				cout << endl;
+			}
 		}
-	      catch (InvalidUsername u)
+
+		// ---------------------
+		// Display LOGGED IN menu
+		// ---------------------
+		else if(currentUser.getUsername() != "TEMP")
 		{
-		  cout << "Invalid username." << endl;
+			displayUserMsg(currentUser);
+			cout << "Please select a number to continue, enter 'q' to quit: ";
+			getline(cin, input);
+			in = input[0];
+			if(input.length() > 1)
+				in = '0';
+
+			switch(in)
+			{
+			case '1':
+				newGame(currentUser);
+				break;
+
+			case '2':
+				displayHistory(currentUser);
+				break;
+
+			case '3':
+				currentUser.logout();
+				break;
+
+			case 'q':
+				cout << endl;
+				cout << "Application terminating..." << endl;
+				break;
+
+			default:
+				cout << endl;
+				cout << "Input not recognized, please try again." << endl;
+				cout << endl;
+			}
 		}
-	      catch (InvalidPassword p)
+
+		// ---------------------
+		// Display DEFAULT menu
+		// ---------------------
+		else
 		{
-		  cout << "Invalid password." << endl;
-		}
-	      break;
-	  
-	    case '3':
-	      loginAdmin(currentUser);
-	      // cout << endl;
-	      // cout << "Sorry, this feature is not yet available." << endl;
-	      // cout << endl;
-	      break;
-	  
-	    case 'q':
-	      cout << endl;
-	      cout << "Application terminating..." << endl;
-	      break;
-	      
-	    default:
-	      cout << endl;
-	      cout << "Input not recognized, please try again." << endl;
-	      cout << endl;
-	      break;
-	    }
+			displayGreeting();
+
+			cout << "Please select a number to continue, enter 'q' to quit: ";
+			getline(cin, input);
+			in = input[0];
+			if (input.length() > 1)
+				in = '0';
+
+			switch(in)
+			{
+			case '1':
+				newGame(currentUser);
+				break;
+
+			case '2':
+				try
+				{
+					currentUser = loginUser(user_vector);
+				}
+				catch (InvalidUsername u)
+				{
+					cout << "Invalid username." << endl;
+				}
+				catch (InvalidPassword p)
+				{
+					cout << "Invalid password." << endl;
+				}
+				break;
+
+			case '3':
+				loginAdmin(currentUser);
+				break;
+
+			case 'q':
+				cout << endl;
+				cout << "Application terminating..." << endl;
+				break;
+
+			default:
+				cout << endl;
+				cout << "Input not recognized, please try again." << endl;
+				cout << endl;
+				break;
+			}
 	}
-    }
-    
-  return 0;
+	}
+
+	return 0;
 }
-
-
