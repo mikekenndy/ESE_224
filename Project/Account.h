@@ -41,4 +41,5 @@ class Account
 	 void login(string password);
 	 bool is_admin();
 	 virtual bool isLoggedIn();  
+	 void resetFile();
 };
